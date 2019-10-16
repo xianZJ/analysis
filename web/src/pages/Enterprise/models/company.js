@@ -1,8 +1,7 @@
-import { queryCompany, removeCompany, addCompany, updateCompany } from '@/services/companyApi';
+import { queryCompany,addCompany } from '@/services/companyApi';
 
 export default {
   namespace: 'company',
-
   state: {
     data: {
       list: [],
@@ -15,14 +14,21 @@ export default {
       const response = yield call(queryCompany, payload);
       yield put({
         type: 'updateCompanyList',
-        payload: response.data,
+        payload: response,
       });
+    },
+    *add({ payload, callback }, { call, put }) {
+      const response = yield call(addCompany, payload);
+      yield put({
+        type: 'save',
+        payload: response,
+      });
+      if (callback) callback();
     },
   },
 
   reducers: {
     updateCompanyList(state, action) {
-      console.log('action = ', action);
       return {
         ...state,
         data: action.payload,
