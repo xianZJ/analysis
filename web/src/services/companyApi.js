@@ -1,15 +1,20 @@
 import { stringify } from 'qs';
 import request from '@/utils/request';
-
+// 查询公司列表
 export async function queryCompany(params) {
-  return request(`/api/company/list?${stringify(params)}`);
+  console.log('params = ',params);
+  return request(`/api/company/list`,{
+    method: 'POST',
+    data:{
+      ...params
+    }
+  });
 }
 export async function removeCompany(params) {
   return request('/api/company', {
     method: 'POST',
     data: {
-      ...params,
-      method: 'delete',
+      ...params
     },
   });
 }
@@ -18,8 +23,7 @@ export async function addCompany(params) {
   return request('/api/company', {
     method: 'POST',
     data: {
-      ...params,
-      method: 'post',
+      ...params
     },
   });
 }

@@ -90,6 +90,10 @@ class Company extends Component {
     const {dispatch} = this.props;
     dispatch({
       type: 'company/fetch',
+      payload:{
+        start:1,
+        limit:10
+      }
     });
   }
 
@@ -151,8 +155,8 @@ class Company extends Component {
       if (err) return;
 
       const values = {
-        ...fieldsValues,
-        updatedAt: fieldsValues.updatedAt && fieldsValues.updatedAt.valueOf(),
+         start: 1,
+         limit: 10
       };
       this.setState({
         formValues: values,

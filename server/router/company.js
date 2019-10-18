@@ -4,11 +4,11 @@ const db  = require('../utils/mysql');
 // 查询公司列表
 router.post('/list',function(req, res){
    const data = req.body;
-   const sql = 'select * from country limit ' +(data.start - 1)* data.limit + ',' + data.limit;
+   const sql = 'select * from company limit ' +(data.start - 1)* data.limit + ',' + data.limit;
    console.log('sql = ',sql);
    db.exec(sql,null,function(err1,res1){
       //console.log('result=',result);
-      const sql2 = 'select count(*) from country;';
+      const sql2 = 'select count(*) from company;';
       db.exec(sql2,null,function(err2,res2) {
          res.json({
             list: res1,

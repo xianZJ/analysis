@@ -78,7 +78,7 @@ export default {
   //设置代理
   proxy: {
     '/api': {
-      target: 'http://127.0.0.1:3333',
+      target: 'http://localhost:3333',
       changeOrigin: true,
       pathRewrite: { '^/api': '' },
     },
