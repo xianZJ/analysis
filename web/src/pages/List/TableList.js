@@ -50,7 +50,7 @@ const CreateForm = Form.create()(props => {
   };
   return (
     <Modal
-      destroyOnClose
+
       title="新建规则"
       visible={modalVisible}
       onOk={okHandle}
