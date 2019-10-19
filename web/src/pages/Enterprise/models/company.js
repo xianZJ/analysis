@@ -1,5 +1,5 @@
 import { queryCompany,addCompany } from '@/services/companyApi';
-
+import { message } from 'antd'
 export default {
   namespace: 'company',
   state: {
@@ -18,13 +18,19 @@ export default {
         payload: response,
       });
     },
-    *add({ payload, callback }, { call, put }) {
+    *add({ payload }, { call, put }) {
+      const { resolve } = payload
+      console.log('payload ==== ',payload)
       const response = yield call(addCompany, payload);
       yield put({
         type: 'save',
         payload: response,
       });
-      if (callback) callback();
+      if(response && response.code === 200){
+        !!resolve && resolve(response)
+      }else{
+        message.error(response.msg);
+      }
     },
   },
 

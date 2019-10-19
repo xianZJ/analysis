@@ -47,7 +47,13 @@ router.post('/add',function(req, res){
    console.log('sql = ',sql)
    db.exec(sql,function(err,data){
       console.log('data = ',data)
-      if(data){
+      if(err){
+         console.log('err = ', err);
+         res.send({
+            msg: err.sqlMessage,
+            code: err.sqlState
+         })
+      }else{
          res.send({
             msg: '添加公司成功。',
             code: 200

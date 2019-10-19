@@ -15,7 +15,8 @@ const CreateForm = Form.create()(
     const okHandle = () => {
       form.validateFields((err, fieldsValue) => {
         if (err) return;
-        form.resetFields();
+        // form.resetFields();
+        console.log('fieldsValue = ', fieldsValue)
         handleAdd(fieldsValue);
       })
     };
@@ -28,17 +29,49 @@ const CreateForm = Form.create()(
         onCancel={() => handleModalVisible()}
       >
         <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="公司名称">
-          { form.getFieldDecorator('name',{
-            rules:[{required:true,message:'请输入公司名称'}]
-          })(<Input place="请输入公司名称" />)}
+          {form.getFieldDecorator('name', {
+            rules: [{required: true, message: '请输入公司名称'}]
+          })(<Input place="请输入公司名称"/>)}
+        </FormItem>
+        <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="公司法人">
+          {form.getFieldDecorator('legal_person', {
+            rules: [{required: true, message: '请输入公司法人'}]
+          })(<Input place="请输入公司法人"/>)}
+        </FormItem>
+
+        <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="公司产品">
+          {form.getFieldDecorator('products', {
+            rules: [{required: true, message: '请输入公司产品'}]
+          })(<Input place="请输入公司产品"/>)}
+        </FormItem>
+
+        <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="经营范围">
+          {form.getFieldDecorator('business_scope', {
+            rules: [{required: true, message: '请输入经营范围'}]
+          })(<Input place="请输入经营范围"/>)}
+        </FormItem>
+
+        <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="公司官网">
+          {form.getFieldDecorator('official_website', {
+            rules: [{required: true, message: '请输入公司官网'}]
+          })(<Input place="请输入公司官网"/>)}
+        </FormItem>
+        <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="公司官网">
+          {form.getFieldDecorator('source', {
+            initialValue: 0,
+            rules: [{required: true, message: '请输入公司官网'}]
+          })(
+            <Select placeholder="请选择" style={{width: '100%'}}>
+              <Option value={0}>百度</Option>
+              <Option value={1}>google</Option>
+            </Select>
+          )}
         </FormItem>
       </Modal>
     )
   }
 )
 
-
-/* eslint react/no-multi-comp:0 */
 @connect(({company, loading}) => ({
   company,
   loading: loading.models.company,
@@ -59,20 +92,20 @@ class Company extends Component {
       dataIndex: 'name',
     },
     {
-      title: '创始人',
-      dataIndex: 'founder',
+      title: '公司法人',
+      dataIndex: 'legal_person',
     },
     {
       title: '公司产品',
-      dataIndex: 'product',
+      dataIndex: 'products',
     },
     {
       title: '经营范围',
-      dataIndex: 'field',
+      dataIndex: 'business_scope',
     },
     {
       title: '公司官网',
-      dataIndex: 'website',
+      dataIndex: 'official_website',
     },
     {
       title: '操作',
@@ -90,9 +123,9 @@ class Company extends Component {
     const {dispatch} = this.props;
     dispatch({
       type: 'company/fetch',
-      payload:{
-        start:1,
-        limit:10
+      payload: {
+        start: 1,
+        limit: 10
       }
     });
   }
@@ -155,8 +188,8 @@ class Company extends Component {
       if (err) return;
 
       const values = {
-         start: 1,
-         limit: 10
+        start: 1,
+        limit: 10
       };
       this.setState({
         formValues: values,
@@ -170,16 +203,20 @@ class Company extends Component {
   };
 
   handleAdd = fields => {
-    const { dispatch } = this.props;
+    const {dispatch} = this.props;
     dispatch({
       type: 'company/add',
       payload: {
-        desc: fields.desc,
-      },
-    });
-
-    message.success('添加成功');
-    this.handleModalVisible();
+        ...fields,
+        resolve: (res) => {
+          console.log('res = ', res)
+          if (res && res.code === 200) {
+            message.success('添加成功');
+            this.handleModalVisible();
+          }
+        }
+      }
+    })
   };
 
   handleModalVisible = flag => {
@@ -197,7 +234,7 @@ class Company extends Component {
       company: {data},
       loading,
     } = this.props;
-    const {selectedRows,modalVisible,updateModalVisible} = this.state;
+    const {selectedRows, modalVisible, updateModalVisible} = this.state;
     const parentMethods = {
       handleAdd: this.handleAdd,
       handleModalVisible: this.handleModalVisible,
@@ -260,7 +297,7 @@ class Company extends Component {
             onChange={this.handleStandardTableChange}
           />
         </Card>
-        <CreateForm {...parentMethods} modalVisible={ modalVisible }></CreateForm>
+        <CreateForm {...parentMethods} modalVisible={modalVisible}></CreateForm>
       </PageHeaderWrapper>
 
     );
