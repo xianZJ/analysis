@@ -5,6 +5,7 @@ import StandardTable from '@/components/StandardTable';
 import {connect} from 'dva';
 import styles from '@/pages/List/TableList.less';
 import PageHeaderWrapper from "@/components/PageHeaderWrapper";
+import Filter from '@/components/Filter'
 
 const FormItem = Form.Item;
 const {Option} = Select;
@@ -248,31 +249,25 @@ class Company extends Component {
     return (
       <PageHeaderWrapper title="">
         <Card bordered={false}>
-          <Form onSubmit={this.handleSearch} layout="inline">
-            <Row gutter={{md: 24, lg: 24, xl: 48}}>
-              <Col md={8} sm={24}>
-                <FormItem label="公司名称">
-                  {getFieldDecorator('name')(<Input placeholder="请输入名称"/>)}
-                </FormItem>
-              </Col>
-              <Col md={8} sm={24}>
-                <FormItem label="公司行业">
-                  {getFieldDecorator('filed')(<Input placeholder="请输入公司行业"/>)}
-                </FormItem>
-              </Col>
-              <Col md={8} sm={24}>
-                <FormItem label="公司规模">
-                  {getFieldDecorator('scale')(
-                    <Select placeholder="请选择公司规模" style={{width: '100%'}}>
-                      <Option value="0">100-500</Option>
-                      <Option value="1">501-10000</Option>
-                      <Option value="2">10001+</Option>
-                    </Select>
-                  )}
-                </FormItem>
-              </Col>
-            </Row>
-          </Form>
+          <Filter>
+            <FormItem label="公司名称">
+              {getFieldDecorator('name')(<Input placeholder="请输入名称"/>)}
+            </FormItem>
+            <FormItem label="公司行业">
+              {getFieldDecorator('field')(<Input placeholder="请输入名称"/>)}
+            </FormItem>
+            <FormItem label="公司规模">
+              {getFieldDecorator('scale', {
+                initialValue: '0'
+              })(
+                <Select placeholder="请选择公司规模" style={{width: '100%'}}>
+                  <Option value="0">100-500</Option>
+                  <Option value="1">501-10000</Option>
+                  <Option value="2">10001+</Option>
+                </Select>
+              )}
+            </FormItem>
+          </Filter>
           <div className={styles.tableListOperator}>
             <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
               新建

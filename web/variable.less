@@ -1,0 +1,87 @@
+// 宽度百分比枚举
+@widthPercentList:30,50,80,100;
+// 字体大小枚举
+@fontSizeList:12,14,16,17,18,20,24,80;
+// 边距大小枚举
+@marginOrPaddingList:5,10,15,20,30;
+
+/*定位相关*/
+.tl{text-align:left}
+.tc{text-align:center}
+.tr{text-align:right}
+.fl{float:left;display:inline}
+.fr{float:right;display:inline}
+.cb{clear:both}
+.cl{clear:left}
+.cr{clear:right}
+
+.cp{
+  cursor:pointer;
+}
+.fl{
+  float:left!important;
+}
+.fr{
+  float:right!important;
+}
+.dil{
+  display:inline-block!important;
+}
+.bn{
+  border:none!important;
+}
+
+// 产生百分比宽度枚举
+.generate-width-percent(@p, @i:1) when(@i =< length(@widthPercentList)){
+  .w@{p}P{
+    width:@p/100*100%!important;
+  }
+  .generate-width-percent(extract(@widthPercentList, @i + 1), @i + 1);
+}
+.generate-width-percent(extract(@widthPercentList, 1));
+
+// 产生字体大小枚举
+.generate-font-size(@p, @i:1) when(@i =< length(@fontSizeList)){
+  .f@{p}{
+    font-size:unit(@p,px)!important;
+  }
+  .generate-font-size(extract(@fontSizeList, @i + 1), @i + 1);
+}
+.generate-font-size(extract(@fontSizeList, 1));
+
+// 产生间距大小枚举
+.generate-margin-padding(@p, @i:1) when(@i =< length(@marginOrPaddingList)){
+  .m@{p}{
+    margin:unit(@p,px)!important;
+  }
+  .ml@{p}{
+    margin-left:unit(@p,px)!important;
+  }
+  .mr@{p}{
+    margin-right:unit(@p,px)!important;
+  }
+  .mt@{p}{
+    margin-top:unit(@p,px)!important;
+  }
+  .mb@{p}{
+    margin-bottom:unit(@p,px)!important;
+  }
+  .p@{p}{
+    padding:unit(@p,px)!important;
+  }
+  .pl@{p}{
+    padding-left:unit(@p,px)!important;
+  }
+  .pr@{p}{
+    padding-right:unit(@p,px)!important;
+  }
+  .pt@{p}{
+    padding-top:unit(@p,px)!important;
+  }
+  .pb@{p}{
+    padding-bottom:unit(@p,px)!important;
+  }
+  .generate-margin-padding(extract(@marginOrPaddingList, @i + 1), @i + 1);
+}
+.generate-margin-padding(extract(@marginOrPaddingList, 1));
+
