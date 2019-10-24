@@ -1,4 +1,4 @@
-import { queryCompany,addCompany } from '@/services/companyApi';
+import { queryCompany,addCompany,deleteCompany,editCompany } from '@/services/companyApi';
 import { message } from 'antd'
 export default {
   namespace: 'company',
@@ -18,15 +18,31 @@ export default {
         payload: response,
       });
     },
-    *add({ payload }, { call, put }) {
-      const { resolve } = payload
-      console.log('payload ==== ',payload)
+    *add({ payload }, { call }) {
       const response = yield call(addCompany, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
       if(response && response.code === 200){
+        message.success(response.msg);
+        const { resolve } = payload
+        !!resolve && resolve(response)
+      }else{
+        message.error(response.msg);
+      }
+    },
+    *edit({ payload }, { call }) {
+      const response = yield call(editCompany, payload);
+      if(response && response.code === 200){
+        message.success(response.msg);
+        const { resolve } = payload
+        !!resolve && resolve(response)
+      }else{
+        message.error(response.msg);
+      }
+    },
+    *delete({payload},{call}){
+      const response = yield call(deleteCompany, payload);
+      if(response && response.code === 200){
+        message.success(response.msg);
+        const { resolve } = payload
         !!resolve && resolve(response)
       }else{
         message.error(response.msg);

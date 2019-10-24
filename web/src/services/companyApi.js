@@ -1,4 +1,4 @@
-import { stringify } from 'qs';
+
 import request from '@/utils/request';
 
 // 添加公司
@@ -7,6 +7,16 @@ export async function addCompany(params) {
     method: 'POST',
     data: {
       ...params
+    },
+  });
+}
+
+// 修改公司
+export async function editCompany(params = {}) {
+  return request(`/api/company/edit`, {
+    method: 'POST',
+    data: {
+      ...params,
     },
   });
 }
@@ -23,22 +33,13 @@ export async function queryCompany(params) {
 }
 
 // 删除公司
-export async function removeCompany(params) {
-  return request('/api/company', {
-    method: 'POST',
+export async function deleteCompany(params) {
+  console.log('params = ',params)
+  return request(`/api/company/del/${ params.id }`, {
+    method: 'delete',
     data: {
       ...params
     },
   });
 }
 
-// 修改公司
-export async function updateCompany(params = {}) {
-  return request(`/api/company?${stringify(params.query)}`, {
-    method: 'POST',
-    data: {
-      ...params.body,
-      method: 'update',
-    },
-  });
-}

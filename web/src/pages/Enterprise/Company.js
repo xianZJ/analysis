@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import {Row, Col, Card, Form, Input, Select, Divider, Button, Dropdown, Icon, Menu, Modal, message} from 'antd';
+import { Card, Form, Input, Select, Divider, Button, Dropdown, Icon, Menu, Modal, message} from 'antd';
 import './Company.less';
 import StandardTable from '@/components/StandardTable';
 import {connect} from 'dva';
@@ -12,15 +12,17 @@ const {Option} = Select;
 
 const CreateForm = Form.create()(
   props => {
-    const {modalVisible, form, handleAdd, handleModalVisible} = props;
+    const {modalVisible, rowData, form, handleAdd, handleModalVisible} = props;
     const okHandle = () => {
       form.validateFields((err, fieldsValue) => {
         if (err) return;
-        // form.resetFields();
+        form.resetFields();
         console.log('fieldsValue = ', fieldsValue)
-        handleAdd(fieldsValue);
+        console.log('fieldsValue = ', rowData)
+        handleAdd(Object.assign(rowData,fieldsValue));
       })
     };
+
     return (
       <Modal
         destroyOnClose
@@ -31,35 +33,40 @@ const CreateForm = Form.create()(
       >
         <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="公司名称">
           {form.getFieldDecorator('name', {
+            initialValue: rowData.name,
             rules: [{required: true, message: '请输入公司名称'}]
-          })(<Input place="请输入公司名称"/>)}
+          })(<Input place="请输入公司名称" />)}
         </FormItem>
         <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="公司法人">
           {form.getFieldDecorator('legal_person', {
+            initialValue: rowData.legal_person,
             rules: [{required: true, message: '请输入公司法人'}]
           })(<Input place="请输入公司法人"/>)}
         </FormItem>
 
         <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="公司产品">
           {form.getFieldDecorator('products', {
+            initialValue: rowData.products,
             rules: [{required: true, message: '请输入公司产品'}]
           })(<Input place="请输入公司产品"/>)}
         </FormItem>
 
         <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="经营范围">
           {form.getFieldDecorator('business_scope', {
+            initialValue: rowData.business_scope,
             rules: [{required: true, message: '请输入经营范围'}]
           })(<Input place="请输入经营范围"/>)}
         </FormItem>
 
         <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="公司官网">
           {form.getFieldDecorator('official_website', {
+            initialValue: rowData.official_website,
             rules: [{required: true, message: '请输入公司官网'}]
-          })(<Input place="请输入公司官网"/>)}
+          })(<Input place="请输入公司官网" />)}
         </FormItem>
         <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="公司官网">
           {form.getFieldDecorator('source', {
-            initialValue: 0,
+            initialValue: rowData.source||0,
             rules: [{required: true, message: '请输入公司官网'}]
           })(
             <Select placeholder="请选择" style={{width: '100%'}}>
@@ -81,10 +88,8 @@ const CreateForm = Form.create()(
 class Company extends Component {
   state = {
     modalVisible: false,
-    updateModalVisible: false,
     selectedRows: [],
-    formValues: {},
-    stepFormValues: {},
+    rowData: {}
   };
 
   columns = [
@@ -112,40 +117,32 @@ class Company extends Component {
       title: '操作',
       render: (text, record) => (
         <Fragment>
-          <a onClick={() => this.handleUpdateModalVisible(true, record)}>配置</a>
-          <Divider type="vertical"/>
-          <a href="">订阅警报</a>
+          <a onClick={() => this.handleModify(record)}>修改</a>
+          <Divider type="vertical" />
+          <a onClick={() => this.handleDel(record.id)}>删除</a>
         </Fragment>
       ),
     },
   ];
 
   componentDidMount() {
+    this.handleGetList();
+  };
+
+  handleGetList = (data) => {
     const {dispatch} = this.props;
     dispatch({
       type: 'company/fetch',
-      payload: {
+      payload: Object.assign({
         start: 1,
         limit: 10
-      }
+      },data)
     });
-  }
+  };
 
   handleSelectRows = rows => {
     this.setState({
       selectedRows: rows,
-    });
-  };
-
-  handleFormReset = () => {
-    const {form, dispatch} = this.props;
-    form.resetFields();
-    this.setState({
-      formValues: {},
-    });
-    dispatch({
-      type: 'company/fetch',
-      payload: {},
     });
   };
 
@@ -174,50 +171,62 @@ class Company extends Component {
     }
   };
 
-  handleSelectRows = rows => {
-    this.setState({
-      selectedRows: rows,
-    });
+  onSearch = e => {
+    e.preventDefault();
+    const  data = this.props.form.getFieldsValue(['name','field','scale'])
+    this.handleGetList(data);
   };
 
-  handleSearch = e => {
+  onReset = e => {
     e.preventDefault();
+    console.log('this.props = ',this.props)
 
-    const {dispatch, form} = this.props;
-    form.validateFields((err, fieldsValues) => {
-      console.log('err = ', err)
-      if (err) return;
+  };
 
-      const values = {
-        start: 1,
-        limit: 10
-      };
-      this.setState({
-        formValues: values,
-      });
-
-      dispatch({
-        type: 'company/fetch',
-        payload: values,
-      });
+  showAdd = () => {
+    this.setState({
+      rowData: {}
     });
+    this.handleModalVisible(true);
   };
 
   handleAdd = fields => {
     const {dispatch} = this.props;
+    const url = fields.id ? 'company/edit' : 'company/add';
     dispatch({
-      type: 'company/add',
+      type: url,
       payload: {
         ...fields,
         resolve: (res) => {
-          console.log('res = ', res)
           if (res && res.code === 200) {
-            message.success('添加成功');
             this.handleModalVisible();
+            this.handleGetList();
           }
         }
       }
     })
+  };
+
+  handleModify = (record) => {
+    console.log('record = ', record);
+    this.setState({
+      rowData: record
+    });
+    this.handleModalVisible(true);
+  };
+
+  handleDel = (id) => {
+    const {dispatch} = this.props;
+    console.log('id = ',id)
+    dispatch({
+       type: 'company/delete',
+       payload: {
+         id,
+         resolve: ()=>{
+           this.handleGetList();
+         }
+       }
+     })
   };
 
   handleModalVisible = flag => {
@@ -226,16 +235,13 @@ class Company extends Component {
     });
   };
 
-  handleStandardTableChange = () => {
-  };
-
   render() {
     const {getFieldDecorator} = this.props.form;
     const {
       company: {data},
       loading,
     } = this.props;
-    const {selectedRows, modalVisible, updateModalVisible} = this.state;
+    const {selectedRows, modalVisible} = this.state;
     const parentMethods = {
       handleAdd: this.handleAdd,
       handleModalVisible: this.handleModalVisible,
@@ -249,7 +255,7 @@ class Company extends Component {
     return (
       <PageHeaderWrapper title="">
         <Card bordered={false}>
-          <Filter>
+          <Filter onReset={this.onReset} onSearch={this.onSearch}>
             <FormItem label="公司名称">
               {getFieldDecorator('name')(<Input placeholder="请输入名称"/>)}
             </FormItem>
@@ -269,18 +275,18 @@ class Company extends Component {
             </FormItem>
           </Filter>
           <div className={styles.tableListOperator}>
-            <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
+            <Button icon="plus" type="primary" onClick={() => this.showAdd()}>
               新建
             </Button>
             {selectedRows.length > 0 && (
               <span>
-              <Button>批量操作</Button>
-              <Dropdown overlay={menu}>
-                <Button>
-                  更多操作 <Icon type="down"/>
-                </Button>
-              </Dropdown>
-            </span>
+                <Button>批量操作</Button>
+                <Dropdown overlay={menu}>
+                  <Button>
+                    更多操作 <Icon type="down" />
+                  </Button>
+                </Dropdown>
+              </span>
             )}
           </div>
           <StandardTable
@@ -292,7 +298,7 @@ class Company extends Component {
             onChange={this.handleStandardTableChange}
           />
         </Card>
-        <CreateForm {...parentMethods} modalVisible={modalVisible}></CreateForm>
+        <CreateForm rowData={this.state.rowData} {...parentMethods} modalVisible={modalVisible}></CreateForm>
       </PageHeaderWrapper>
 
     );
