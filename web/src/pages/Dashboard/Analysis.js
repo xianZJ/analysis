@@ -46,12 +46,14 @@ class Analysis extends Component {
     });
   };
 
+  // 页签切换功能
   handleTabChange = key => {
     this.setState({
       currentTabKey: key,
     });
   };
 
+  //右侧ipthiua
   handleRangePickerChange = rangePickerValue => {
     const { dispatch } = this.props;
     this.setState({

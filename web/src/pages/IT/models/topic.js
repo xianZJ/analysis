@@ -1,7 +1,8 @@
-import { queryCompany,addCompany,download,deleteCompany,editCompany } from '@/services/recruitApi';
+import { queryTopic,addTopic,deleteTopic,editTopic } from '@/services/topicApi';
 import { message } from 'antd'
+
 export default {
-  namespace: 'recruit',
+  namespace: 'topic',
   state: {
     data: {
       list: [],
@@ -12,24 +13,14 @@ export default {
   effects: {
     *fetch({ payload }, { call, put }) {
       console.log('payload = ',payload);
-      const response = yield call(queryCompany, payload);
+      const response = yield call(queryTopic, payload);
       yield put({
-        type: 'updateRecruitList',
+        type: 'updateTopicList',
         payload: response,
       });
     },
-    *download({ payload }, { call }) {
-      console.log('download payload = ',payload);
-      const response = yield call(download, payload);
-      if(response && response.code === 200){
-        const { resolve } = payload
-        !!resolve && resolve(response)
-      }else{
-        message.error(response.msg);
-      }
-    },
     *add({ payload }, { call }) {
-      const response = yield call(addCompany, payload);
+      const response = yield call(addTopic, payload);
       if(response && response.code === 200){
         message.success(response.msg);
         const { resolve } = payload
@@ -39,7 +30,7 @@ export default {
       }
     },
     *edit({ payload }, { call }) {
-      const response = yield call(editCompany, payload);
+      const response = yield call(editTopic, payload);
       if(response && response.code === 200){
         message.success(response.msg);
         const { resolve } = payload
@@ -49,7 +40,7 @@ export default {
       }
     },
     *delete({payload},{call}){
-      const response = yield call(deleteCompany, payload);
+      const response = yield call(deleteTopic, payload);
       if(response && response.code === 200){
         message.success(response.msg);
         const { resolve } = payload
@@ -61,7 +52,7 @@ export default {
   },
 
   reducers: {
-    updateRecruitList(state, action) {
+    updateTopicList(state, action) {
       return {
         ...state,
         data: action.payload,

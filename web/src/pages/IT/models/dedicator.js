@@ -1,35 +1,25 @@
-import { queryCompany,addCompany,download,deleteCompany,editCompany } from '@/services/recruitApi';
+import { queryDedicator,addDedicator,deleteDedicator,editDedicator } from '@/services/dedicatorApi';
 import { message } from 'antd'
+
 export default {
-  namespace: 'recruit',
+  namespace: 'dedicator',
   state: {
     data: {
       list: [],
       pagination: {},
     },
   },
-
   effects: {
     *fetch({ payload }, { call, put }) {
       console.log('payload = ',payload);
-      const response = yield call(queryCompany, payload);
+      const response = yield call(queryDedicator, payload);
       yield put({
-        type: 'updateRecruitList',
+        type: 'updateDedicatorList',
         payload: response,
       });
     },
-    *download({ payload }, { call }) {
-      console.log('download payload = ',payload);
-      const response = yield call(download, payload);
-      if(response && response.code === 200){
-        const { resolve } = payload
-        !!resolve && resolve(response)
-      }else{
-        message.error(response.msg);
-      }
-    },
     *add({ payload }, { call }) {
-      const response = yield call(addCompany, payload);
+      const response = yield call(addDedicator, payload);
       if(response && response.code === 200){
         message.success(response.msg);
         const { resolve } = payload
@@ -39,7 +29,7 @@ export default {
       }
     },
     *edit({ payload }, { call }) {
-      const response = yield call(editCompany, payload);
+      const response = yield call(editDedicator, payload);
       if(response && response.code === 200){
         message.success(response.msg);
         const { resolve } = payload
@@ -49,7 +39,7 @@ export default {
       }
     },
     *delete({payload},{call}){
-      const response = yield call(deleteCompany, payload);
+      const response = yield call(deleteDedicator, payload);
       if(response && response.code === 200){
         message.success(response.msg);
         const { resolve } = payload
@@ -61,7 +51,7 @@ export default {
   },
 
   reducers: {
-    updateRecruitList(state, action) {
+    updateDedicatorList(state, action) {
       return {
         ...state,
         data: action.payload,

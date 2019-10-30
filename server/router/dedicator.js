@@ -4,15 +4,15 @@ const db  = require('../utils/mysql');
 // 查询公司列表
 router.post('/list',function(req, res){
     const data = req.body;
-    const filterMenu = ['company_name','company_scale'];
+    const filterMenu = ['dedicator_name'];
 
     let filter = db.createLike(filterMenu,data);
     //console.log('filter = ',filter);
-    const sql = 'select * from recruit '+ filter +'limit '  +(data.start - 1)* data.limit + ',' + data.limit;
+    const sql = 'select * from dedicator '+ filter +'limit '  +(data.start - 1)* data.limit + ',' + data.limit;
     console.log('sql = ',sql);
     db.exec(sql,null,function(err1,res1){
         //console.log('result=',result);
-        const sql2 = 'select count(*) from recruit;';
+        const sql2 = 'select count(*) from dedicator;';
         db.exec(sql2,null,function(err2,res2) {
             res.json({
                 list: res1,
@@ -28,14 +28,13 @@ router.post('/list',function(req, res){
 // 添加公司
 router.post('/add',function(req, res){
     const data = req.body;
-    let sql = "INSERT INTO `recruit` VALUES (";
+    let sql = "INSERT INTO `dedicator` VALUES (";
     const menu = [
-        'id','company_name','company_position',
-        'publish_person','publish_way',
-        'publish_update_time','compensation','company_location',
-        'company_scale','found_time','position_describe',
-        'industry','former_colleague','create_time','update_time',
-        'note','business_scope','work_year','education_background','financial_stage'
+        'ip','dedicator_name','dedicator_birthday',
+        'dedicator_sex','dedicator_hometown',
+        'dedicator_companys','dedicator_position','dedicator_signs',
+        'dedicator_blogs','dedicator_git','create_time','update_time',
+        'note'
     ];
 
     sql += db.createAdd(menu,data) + ')';
@@ -61,14 +60,13 @@ router.post('/add',function(req, res){
 // 添加公司
 router.post('/edit',function(req, res){
     const data = req.body;
-    let sql = "update recruit set ";
+    let sql = "update dedicator set ";
     const menu = [
-        'company_name','company_position',
-        'publish_person','publish_way',
-        'publish_update_time','compensation','company_location',
-        'company_scale','found_time','position_describe',
-        'industry','former_colleague','create_time','update_time',
-        'note','business_scope','work_year','education_background','financial_stage'
+        'dedicator_name','dedicator_birthday',
+        'dedicator_sex','dedicator_hometown',
+        'dedicator_companys','dedicator_position','dedicator_signs',
+        'dedicator_blogs','dedicator_git','create_time','update_time',
+        'note'
     ];
     for(var s in menu){
         let value;
@@ -103,7 +101,7 @@ router.delete('/del/:id',function(req, res){
     const data = req.params;
     console.log('query = ',req.query)
     const companyId = data.id;
-    let sql = 'DELETE FROM recruit WHERE id = '+ companyId;
+    let sql = 'DELETE FROM dedicator WHERE id = '+ companyId;
     console.log('sql',sql)
     db.exec(sql,null, function(err, data){
         if(!err){
@@ -119,7 +117,7 @@ router.delete('/del/:id',function(req, res){
 router.get('/:id',function(req, res){
     const data = req.params;
     const companyId = data.id;
-    let sql = 'select * FROM recruit WHERE id = '+ companyId;
+    let sql = 'select * FROM dedicator WHERE id = '+ companyId;
     console.log('sql = ',sql);
     db.exec(sql,null, function(err, data){
         if(!err){

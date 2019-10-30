@@ -35,9 +35,9 @@ export default [
             component: './Enterprise/Company',
           },
           {
-            path: '/enterprise/website',
-            name: '网站',
-            component: './Enterprise/Website',
+            path: '/enterprise/recruit',
+            name: '招聘',
+            component: './Enterprise/Recruit',
           },
           {
             path: '/enterprise/person',
@@ -46,6 +46,26 @@ export default [
           },
         ],
       },
+
+      // IT技术
+      {
+        path: '/it',
+        name: 'IT',
+        icon: 'dashboard',
+        routes: [
+          {
+            path: '/it/topic',
+            name: '技术点',
+            component: './It/Topic',
+          },
+          {
+            path: '/it/dedicator',
+            name: '作者',
+            component: './It/Dedicator',
+          },
+        ],
+      },
+
       // 体育方面
       {
         path: '/sports',

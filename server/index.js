@@ -7,7 +7,10 @@ const logger = log4js.getLogger()
 log4js.useLogger(app, logger)
 
 const company = require('./router/company');
-const website = require('./router/website');
+const recruit = require('./router/recruit');
+const topic = require('./router/topic');
+const dedicator = require('./router/dedicator');
+const download = require('./router/download');
 app.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
@@ -18,10 +21,18 @@ app.all('*', function(req, res, next) {
 });
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }));//解析post请求数据
-
+// 静态资源
 app.use('/public', express.static('public'))
+// 公司信息
 app.use('/company',company);
-app.use('/website',website);
+// 招聘信息
+app.use('/recruit',recruit);
+// 知识点信息
+app.use('/topic',topic);
+// 作者信息
+app.use('/dedicator',dedicator);
+// 公司信息
+app.use('/download',download);
 
 const server = app.listen(3333, function () {
     const host = server.address().address;

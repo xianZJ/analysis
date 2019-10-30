@@ -55,34 +55,34 @@ router.post('/add',function(req, res){
 
 });
 // 添加公司
-router.post('/edit',function(req, res){
+router.post('/edit', function (req, res) {
    const data = req.body;
    let sql = "update company set ";
    const menu = [
-      'name','regist_time','legal_person',
-      'business_scope','registered_capital','official_website',
-      'is_list','headqurters','industry',
-      'employees','products','note','code','source',
+      'name', 'regist_time', 'legal_person',
+      'business_scope', 'registered_capital', 'official_website',
+      'is_list', 'headqurters', 'industry',
+      'employees', 'products', 'note', 'code', 'source',
    ];
-   for(var s in menu){
+   for (var s in menu) {
       let value;
-      if(data[menu[s]]){
-         value =   menu[s] +' = \''+ data[menu[s]]  + '\',';
-         sql +=  value ;
+      if (data[menu[s]]) {
+         value = menu[s] + ' = \'' + data[menu[s]] + '\',';
+         sql += value;
       }
    }
-   sql = sql.slice(0,sql.length - 1);
+   sql = sql.slice(0, sql.length - 1);
    sql += ' where id = ' + data.id;
-   console.log('sql = ',sql)
-   db.exec(sql,function(err,data){
-      console.log('data = ',data)
-      if(err){
+   console.log('sql = ', sql)
+   db.exec(sql, function (err, data) {
+      console.log('data = ', data)
+      if (err) {
          console.log('err = ', err);
          res.send({
             msg: err.sqlMessage,
             code: err.sqlState
          })
-      }else{
+      } else {
          res.send({
             msg: '修改公司成功。',
             code: 200
